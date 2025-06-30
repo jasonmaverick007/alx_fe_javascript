@@ -1,3 +1,4 @@
+const SERVER_URL = "https://localhost:3001/quotes"
 let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
     { text: "Creativity is intelligence having fun.", category: "Inspiration" },
@@ -151,7 +152,49 @@ function filterQuotes() {
     sessionStorage.setItem("lastQuote", JSON.stringify(randomQoute));
 }
 
+async function syncWithServer() {
+    try {
+        const res = await fetch(SERVER_URL);
+        if (!res.ok) throw new Error("Failed to fetch from server");
+
+        const serverQuotes = await res.json();
+        const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+        const mergedQuotes = resolveConflicts(localQuotes, serverQuotes);
+        quotes = mergedQuotes;
+        saveQuotes();
+        populateCategories();
+        filterQuotes();
+
+        notifyUser("Quotes synced with server successfully.");
+    } catch (err) {
+        console.error("sync error", err);
+        notifyUser("Sync failed. Server may be offline.", true);
+    }
+}
+
+function resolveConflicts(local, server) {
+    const seen = new Set();
+    const combined = [];
+
+    server.forEach(q => {
+        const key = q.text + "|" + q.category;
+        seen.add(key);
+        combined.push(q);
+    });
+
+    local.forEach(q => {
+        const key = q.text + "|" + q.category;
+        seen.add(key);
+        combined.push(q);
+    });
+
+    return;
+}
+
 newQuoteBtn.addEventListener('click', showRandomQuote);
 categoryFilter.addEventListener('change', showRandomQuote);
 createAddQuoteForm();
 updateCategoryOptions();
+
+setInterval(syncWithServer, 30000);
