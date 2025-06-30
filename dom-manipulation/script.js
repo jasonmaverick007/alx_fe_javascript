@@ -55,6 +55,29 @@ function updateCategoryOptions() {
     });
 }
 
+function createAddQuoteForm() {
+    const container = document.getElementById('quoteFormContainer');
+
+    const quoteInput = document.createElement('input');
+    quoteInput.type = 'text';
+    quoteInput.id = 'newQuoteText';
+    quoteInput.placeholder = 'Enter a new quote';
+
+    const categoryInput = document.createElement('input');
+    categoryInput.type = 'text';
+    categoryInput.id = 'newQuoteCategory';
+    categoryInput.placeholder = 'Enter quote category';
+
+    const addBtn = document.createElement('button');
+    addBtn.textContent = 'Add Quote';
+    addBtn.addEventListener('click', addQuote);
+
+    container.appendChild(quoteInput);
+    container.appendChild(categoryInput);
+    container.appendChild(addBtn);
+}
+
 newQuoteBtn.addEventListener('click', showRandomQuote);
 categoryFilter.addEventListener('change', showRandomQuote);
 updateCategoryOptions();
+createAddQuoteForm();
