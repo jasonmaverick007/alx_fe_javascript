@@ -173,6 +173,14 @@ async function syncWithServer() {
     }
 }
 
+async function fetchQuotesFromServer() {
+    const response = await fetch(SERVER_URL);
+    if (!response.ok) {
+        throw new Error("Failed to fetch quotes from server.");
+    }
+    return await response.json();
+}
+
 function resolveConflicts(local, server) {
     const seen = new Set();
     const combined = [];
