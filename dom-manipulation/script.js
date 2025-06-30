@@ -1,4 +1,4 @@
-let quotes = [
+let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
     { text: "Creativity is intelligence having fun.", category: "Inspiration" },
     { text: "Do what you can with all you have, wherever you are.", category: "Motivation" },
@@ -21,6 +21,8 @@ function showRandomQuote() {
     }
     const randomQoute = filteredQuotes[Math.floor(Math.random() * filteredQuotes.length)];
     quoteDisplay.textContent = `"${randomQoute.text}" - (${randomQoute.category})`;
+
+    sessionStorage.setItem("LastQuote", JSON.stringify(randomQoute));
 }
 
 function addQuote() {
@@ -37,6 +39,8 @@ function addQuote() {
 
     const newQuote = { text: quoteText, category: quotecategory };
     quotes.push(newQuote);
+    saveQuotes();
+    updateCategoryOptions();
 
     updateCategoryOptions();
     textInput.value = "";
@@ -77,7 +81,40 @@ function createAddQuoteForm() {
     container.appendChild(addBtn);
 }
 
+function saveQuotes() {
+    localStorage.setItem('quotes', JSON.stringify(quotes));
+}
+
+function exportToJsonFile() {
+    const dataStr = JSON.stringify(quotes, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json"});
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'quotes.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(event) {
+        try {
+            const importedQuotes = JSON.parse(event.target.result);
+            if (!Array.isArray(importedQuotes)) throw new Error("invalid format");
+            quotes.push(...importedQuotes);
+            saveQuotes();
+            updateCategoryOptions();
+            alert('Quotes imported successfully!');
+        } catch (err) {
+            alert('Failed to import quotes. Please check your JSON file.');
+        }
+    };
+    fileReader.readAsText(event.target.files[0]);
+}
+
 newQuoteBtn.addEventListener('click', showRandomQuote);
 categoryFilter.addEventListener('change', showRandomQuote);
-updateCategoryOptions();
 createAddQuoteForm();
+updateCategoryOptions();
