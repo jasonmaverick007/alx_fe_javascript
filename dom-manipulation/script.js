@@ -167,7 +167,7 @@ async function syncWithServer() {
         populateCategories();
         filterQuotes();
 
-        notifyUser("Quotes synced with server successfully.");
+        notifyUser("Quotes synced with server!");
     } catch (err) {
         console.error("sync error", err);
         notifyUser("Sync failed. Server may be offline.", true);
