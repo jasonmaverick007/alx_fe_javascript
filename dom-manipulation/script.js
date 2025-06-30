@@ -1,4 +1,4 @@
-const SERVER_URL = "https://localhost:3001/quotes"
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
 let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
     { text: "Creativity is intelligence having fun.", category: "Inspiration" },
