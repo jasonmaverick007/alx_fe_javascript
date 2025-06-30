@@ -42,6 +42,7 @@ function addQuote() {
     quotes.push(newQuote);
     saveQuotes();
     populateCategories();
+    pushQuoteToServer();
 
     document.getElementById('newQuoteText').value = "";
     document.getElementById('newQuoteCategory').value = "";
@@ -198,6 +199,27 @@ function resolveConflicts(local, server) {
     });
 
     return;
+}
+
+async function pushQuoteToServer(quote) {
+  try {
+    const response = await fetch(SERVER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(quote)
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to push quote to server");
+    }
+
+    console.log("Quote pushed to server:", quote);
+  } catch (error) {
+    console.error("Push failed:", error);
+    notifyUser("Failed to push quote to server", true);
+  }
 }
 
 newQuoteBtn.addEventListener('click', showRandomQuote);
