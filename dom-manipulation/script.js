@@ -222,6 +222,10 @@ async function pushQuoteToServer(quote) {
   }
 }
 
+async function syncQuotes() {
+    await syncWithServer();
+}
+
 newQuoteBtn.addEventListener('click', showRandomQuote);
 categoryFilter.addEventListener('change', showRandomQuote);
 createAddQuoteForm();
